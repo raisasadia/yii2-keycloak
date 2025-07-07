@@ -1,0 +1,22 @@
+{
+  "name": "raisa/yii2-keycloak-auth",
+  "description": "A simple Keycloak integration for Yii2",
+  "type": "yii2-extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Umme Sadia Raisa",
+      "email": "raisa.ummesadia@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "yiisoft/yii2": "^2.0",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "yii2keycloak\\Keycloak\\": "src/Keycloak/"
+    }
+  }
+}
