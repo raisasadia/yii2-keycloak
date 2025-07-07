@@ -17,7 +17,7 @@ A lightweight Yii2 package to integrate Keycloak authentication and administrati
 
 ### Installation
 
-git clone https://github.com/your-username/yii2-keycloak-auth.git
+git clone https://github.com/raisasadia/yii2-keycloak.git
 
 Then in your main project’s composer.json, add:
 "repositories": [
