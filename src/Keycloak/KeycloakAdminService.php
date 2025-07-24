@@ -26,13 +26,16 @@ class KeycloakAdminService
         }
 
         try {
-            $client = new Client();
+
+            $client = new Client([
+                'verify' => false,
+            ]);
 
             $response = $client->post("{$this->baseUrl}/realms/{$this->realm}/protocol/openid-connect/token", [
                 'form_params' => [
                     'grant_type' => 'client_credentials',
-                    'client_id' => $this->params['admin_client_id'],
-                    'client_secret' => $this->params['admin_client_secret'],
+                    'client_id' => $this->params['client_id'],
+                    'client_secret' => $this->params['client_secret'],
                 ],
             ]);
 
@@ -44,6 +47,47 @@ class KeycloakAdminService
             Yii::error("Keycloak token error: " . $e->getMessage(), 'keycloak');
             return null;
         }
+    }
+
+    public function findUserByUsernameOrEmail($identifier)
+    {
+        $token = $this->getAdminToken();
+
+        $client = new Client([
+            'verify' => false
+        ]);
+
+        $response = $client->get($this->baseUrl . '/admin/realms/' . $this->realm . '/users', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+            ],
+            'query' => ['username' => $identifier],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function createUser($userData)
+    {
+        $token = $this->getAdminToken();
+        
+        $client = new Client([
+            'verify' => false,
+        ]);
+
+        $response = $client->post($this->baseUrl . '/admin/realms/' . $this->realm . '/users', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+            ],
+            'json' => $userData
+        ]);
+
+        return [
+            'status' => $response->getStatusCode(),
+            'message' => $response->getBody()->getContents(),
+        ];
     }
 
     public function getAllUsers()
