@@ -18,14 +18,4 @@ class Keycloak
         return new KeycloakAdminService();
     }
 
-    public static function find($id)
-    {
-        return self::admin()->getUserById($id);
-    }
-
-    public static function getUserSessions($userId)
-    {
-        return self::admin()->getUserSessions($userId);
-    }
-
 }
