@@ -10,9 +10,7 @@ class UserService
 
     public function __construct()
     {
-        $this->client = new Client([
-            'verify' => false, // Disable SSL verification for dev only
-        ]);
+        $this->client = new Client();
     }
 
     /**

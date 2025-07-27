@@ -90,6 +90,52 @@ class KeycloakAdminService
         ];
     }
 
+    public function updateUser($userId, $data)
+    {
+        $token = $this->getAdminToken();
+        $url = "{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}";
+
+        $client = new Client([
+            'verify' => false,
+        ]);
+
+        $response = $client->put($url, [
+            'headers' => [
+                'Authorization' => "Bearer {$token}",
+                'Content-Type' => 'application/json',
+            ],
+            'json' => $data,
+        ]);
+
+        return $response->getStatusCode() === 204;
+    }
+
+    public function resetUserPassword($userId, $newPassword)
+    {
+        $token = $this->getAdminToken();
+        $url = "{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/reset-password";
+
+        $data = [
+            'type' => 'password',
+            'value' => $newPassword,
+            'temporary' => false,
+        ];
+
+        $client = new Client([
+            'verify' => false,
+        ]);
+
+        $response = $client->put($url, [
+            'headers' => [
+                'Authorization' => "Bearer {$token}",
+                'Content-Type' => 'application/json',
+            ],
+            'json' => $data,
+        ]);
+
+        return $response->getStatusCode() === 204;
+    }
+
     public function getAllUsers()
     {
         $token = $this->getAdminToken();
@@ -105,82 +151,21 @@ class KeycloakAdminService
         return json_decode($response->getBody(), true);
     }
 
-    public function getUserById($userId)
+    public function getUserIdByEmail($email)
     {
         $token = $this->getAdminToken();
-        if (!$token) return null;
+        $url = "{$this->baseUrl}/admin/realms/{$this->realm}/users?email=" . urlencode($email);
 
-        $client = new Client();
-        $response = $client->get("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}", [
+        $client = new \GuzzleHttp\Client();
+        $response = $client->get($url, [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
-            ],
-        ]);
-
-        return json_decode($response->getBody(), true);
-    }
-
-    public function getUserSessions($userId)
-    {
-        $token = $this->getAdminToken();
-        if (!$token) return [];
-
-        $client = new Client();
-        $response = $client->get("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/sessions", [
-            'headers' => [
-                'Authorization' => "Bearer {$token}",
-            ],
-        ]);
-
-        return json_decode($response->getBody(), true);
-    }
-
-    public function deleteSession($sessionId)
-    {
-        $token = $this->getAdminToken();
-        if (!$token) return false;
-
-        $client = new Client();
-        $url = "{$this->baseUrl}/admin/realms/{$this->realm}/sessions/{$sessionId}";
-
-        try {
-            $response = $client->delete($url, [
-                'headers' => [
-                    'Authorization' => "Bearer {$token}",
-                ],
-            ]);
-
-            return $response->getStatusCode() === 204;
-        } catch (\Exception $e) {
-            Yii::error("Failed to delete session {$sessionId}: " . $e->getMessage(), 'keycloak');
-            return false;
-        }
-    }
-
-    public function getUserIdFromSessionId($sessionId)
-    {
-        $token = $this->getAdminToken();
-        if (!$token) return null;
-
-        $client = new Client();
-        $response = $client->get("{$this->baseUrl}/admin/realms/{$this->realm}/users", [
-            'headers' => [
-                'Authorization' => "Bearer {$token}",
-            ],
+            ]
         ]);
 
         $users = json_decode($response->getBody(), true);
 
-        foreach ($users as $user) {
-            $sessions = $this->getUserSessions($user['id']);
-            foreach ($sessions as $session) {
-                if ($session['id'] === $sessionId) {
-                    return $user['id'];
-                }
-            }
-        }
-
-        return null;
+        return isset($users[0]['id']) ? $users[0]['id'] : null;
     }
 
     public function forceLogoutUserById($userId)
