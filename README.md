@@ -1,71 +1,109 @@
-yii2-keycloak-auth
--------------------
-A lightweight Yii2 package to integrate Keycloak authentication and administration. Supports login, session management, user info, and force logout functionality using Keycloak's OpenID Connect and Admin REST APIs.
+# yii2-keycloak-auth
 
-### Features
-** Keycloak OIDC login with authorization code grant
+A simple Keycloak integration package for the Yii2 framework.  
+Provides authentication, user information retrieval, and admin API operations through Keycloak's OpenID Connect and Admin REST API.
 
-** Retrieve authenticated user info
+---
 
-** View all users from Keycloak
+## Features
+- Keycloak Authentication — Exchange authorization code for tokens
+- User Service — Fetch user info from Keycloak using an access token
+- Admin Service — Create, update, search, and manage Keycloak users
+- Force Logout — Logout users remotely from Keycloak sessions
+- Easy Yii2 Integration — Works with Yii2 `components` configuration
+- PSR-4 Autoloading — Compatible with Composer
 
-** Get user by ID
+---
 
-** Admin-only session management (view, delete, force logout)
+## Requirements
+- PHP >= 7.4
+- [yiisoft/yii2](https://github.com/yiisoft/yii2) >= 2.0
+- [guzzlehttp/guzzle](https://github.com/guzzle/guzzle) >= 7.0
+- Keycloak server (tested with Keycloak v21+)
 
-** Frontchannel logout support
+---
 
-### Installation
+## Installation
+Install via Composer:
 
-git clone https://github.com/raisasadia/yii2-keycloak.git
-
-Then in your main project’s composer.json, add:
-"repositories": [
-  {
-    "type": "path",
-    "url": "relative/path/to/yii2-keycloak-auth"
-  }
-],
-
-Then run:
-
-composer require raisa/yii2-keycloak-auth:dev-main
+```bash
+composer require raisa/yii2-keycloak-auth
 
 
-Then test in a Yii2 controller:
+Configuration
 
-use yii2keycloak\Keycloak\Keycloak;
+Add the following to your Yii2 config file (config/params.php):
 
-$userInfo = Keycloak::user()->getUserInfo($accessToken);
-
-### Configuration
-In params.php:
+<?php
 
 return [
-    'keycloak' => [
-        'base_url' => 'http://localhost:8081',
-        'realm' => 'myrealm',
-
-        'client_id' => 'yii-client',
-        'redirect_uri' => 'http://localhost:8080/site/callback',
-        'logout_url' => 'http://localhost:8081/realms/myrealm/protocol/openid-connect/logout',
-        'userinfo_url' => 'http://localhost:8081/realms/myrealm/protocol/openid-connect/userinfo',
-        'token_url' => 'http://localhost:8081/realms/myrealm/protocol/openid-connect/token',
-
-        'admin_client_id' => 'yii-admin',
-        'admin_client_secret' => 'YOUR_ADMIN_CLIENT_SECRET',
-        'redirect_uri_after_logout' => 'http://localhost:8080',
-    ]
-];
+  'keycloak' => [
+    'realm' => 'realm-name',
+    'client_id' => 'client-id',
+    'client_secret' => 'your-client-secret',
+    'base_url' => 'https://keycloak.example.com',
+    'token_url' => 'https://keycloak.example.com/realms/my-realm/protocol/openid-connect/token',
+    'auth_url' => 'https://keycloak.example.com/realms/my-realm/protocol/openid-connect/auth',
+    'userinfo_url' => 'https://keycloak.example.com/realms/my-realm/protocol/openid-connect/userinfo',
+    'logout_url' => 'https://keycloak.example.com/realms/my-realm/protocol/openid-connect/logout',
+    'redirect_uri' => 'https://yourapp.com/callback',
+    'redirect_uri_after_logout' => 'http://yourapp.com',
+  ],
+]
 
 
-### Folder Structure
+File Structure
+
 yii2-keycloak-auth/
-├── Keycloak/
-│   ├── Keycloak.php              # Facade class for unified access
-│   ├── AuthService.php           # Handles token exchange
-│   ├── UserService.php           # Fetch user info via /userinfo
-│   └── KeycloakAdminService.php  # Full Keycloak Admin API support
+├── src/
+│   ├── AuthService.php            # Handles token exchange
+│   ├── UserService.php            # Retrieves Keycloak user info
+│   ├── KeycloakAdminService.php   # Admin API operations
+│   └── Keycloak.php               # Facade for quick access to services
+├── composer.json
+├── README.md
+└── LICENSE
 
 
+Usage
+1. Authentication
+
+  use yii2keycloak\Keycloak;
+
+  $code = $_GET['code']; // From Keycloak redirect
+  $redirectUri = 'https://yourapp.com/callback';
+
+  $tokenData = Keycloak::auth()->getToken($code, $redirectUri);
+
+  if (isset($tokenData['access_token'])) {
+      // Store tokens in session or database
+  }
+
+2. Get User Info
+
+$accessToken = $tokenData['access_token'];
+$userInfo = Keycloak::user()->getUserInfo($accessToken);
+print_r($userInfo);
+
+3. Admin Operations
+
+// Get all users
+$users = Keycloak::KeycloakAdminService()->getAllUsers();
+
+// Create a new user
+$newUser = [
+    'username' => 'john.doe',
+    'email' => 'john@example.com',
+    'enabled' => true,
+];
+Keycloak::KeycloakAdminService()->createUser($newUser);
+
+// Force logout a user
+$userId = 'keycloak-user-id';
+Keycloak::KeycloakAdminService()->forceLogoutUserById($userId);
+
+
+License
+
+This package is open-sourced software licensed under the MIT license.
 
