@@ -1,11 +1,12 @@
 <?php
-namespace yii2keycloak\Keycloak;
+namespace yii2keycloak;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 class AuthService
 {
+
     public function getToken($code, $redirectUri)
     {
         $client = new Client();

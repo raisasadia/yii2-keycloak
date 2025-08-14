@@ -4,9 +4,9 @@
   "type": "yii2-extension",
   "license": "MIT",
   "authors": [
-    {
-      "name": "Umme Sadia Raisa",
-      "email": "raisa.ummesadia@gmail.com"
+    { 
+      "name": "Umme Sadia Raisa", 
+      "email": "raisa.ummesadia@gmail.com" 
     }
   ],
   "require": {
@@ -16,7 +16,10 @@
   },
   "autoload": {
     "psr-4": {
-      "yii2keycloak\\Keycloak\\": "src/Keycloak/"
+      "yii2keycloak\\": "src/"
     }
+  },
+  "config": { 
+    "sort-packages": true 
   }
 }
