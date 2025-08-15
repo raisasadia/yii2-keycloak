@@ -121,7 +121,7 @@ yii2-keycloak-auth/
 > Some parts of this package (e.g., `KeycloakAdminService`) initialize the Guzzle HTTP client with `'verify' => false` to bypass SSL certificate verification.  
 > This is intended for local development or self-signed certificates only.  
 > **Do not use `'verify' => false` in production**, as it makes HTTPS connections insecure.  
-> For production environments, remove this option or set it to `true` and ensure you have a valid SSL certificate.
+> For production environments, remove this option or set it to `true` and ensure you have a valid SSL >certificate.
 
 ## License
 
