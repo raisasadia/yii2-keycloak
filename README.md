@@ -34,6 +34,8 @@ composer require raisa/yii2-keycloak-auth
 
 Add the following to your Yii2 config file (config/params.php):
 
+```php
+
 <?php
 
 return [
@@ -49,7 +51,9 @@ return [
     'redirect_uri' => 'https://yourapp.com/callback',
     'redirect_uri_after_logout' => 'http://yourapp.com',
   ],
-]
+];
+
+```
 
 
 ## File Structure
@@ -68,6 +72,8 @@ yii2-keycloak-auth/
 ## Usage
 1. Authentication
 
+```php
+
   use yii2keycloak\Keycloak;
 
   $code = $_GET['code']; // From Keycloak redirect
@@ -79,28 +85,37 @@ yii2-keycloak-auth/
       // Store tokens in session or database
   }
 
+```
+
 2. Get User Info
 
-$accessToken = $tokenData['access_token'];
-$userInfo = Keycloak::user()->getUserInfo($accessToken);
-print_r($userInfo);
+```php
+
+  $accessToken = $tokenData['access_token'];
+  $userInfo = Keycloak::user()->getUserInfo($accessToken);
+  print_r($userInfo);
+
+```
 
 3. Admin Operations
 
-// Get all users
-$users = Keycloak::KeycloakAdminService()->getAllUsers();
+```php
 
-// Create a new user
-$newUser = [
-    'username' => 'john.doe',
-    'email' => 'john@example.com',
-    'enabled' => true,
-];
-Keycloak::KeycloakAdminService()->createUser($newUser);
+  // Get all users
+  $users = Keycloak::admin()->getAllUsers();
 
-// Force logout a user
-$userId = 'keycloak-user-id';
-Keycloak::KeycloakAdminService()->forceLogoutUserById($userId);
+  // Create a new user
+  $newUser = [
+      'username' => 'john.doe',
+      'email' => 'john@example.com',
+      'enabled' => true,
+  ];
+  Keycloak::admin()->createUser($newUser);
+
+  // Force logout a user
+  $userId = 'keycloak-user-id';
+  Keycloak::admin()->forceLogoutUserById($userId);
+```
 
 
 ## License
