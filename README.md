@@ -28,9 +28,9 @@ Install via Composer:
 
 ```bash
 composer require raisa/yii2-keycloak-auth
+```
 
-
-Configuration
+## Configuration
 
 Add the following to your Yii2 config file (config/params.php):
 
@@ -52,7 +52,7 @@ return [
 ]
 
 
-File Structure
+## File Structure
 
 yii2-keycloak-auth/
 ├── src/
@@ -65,7 +65,7 @@ yii2-keycloak-auth/
 └── LICENSE
 
 
-Usage
+## Usage
 1. Authentication
 
   use yii2keycloak\Keycloak;
@@ -103,7 +103,7 @@ $userId = 'keycloak-user-id';
 Keycloak::KeycloakAdminService()->forceLogoutUserById($userId);
 
 
-License
+## License
 
 This package is open-sourced software licensed under the MIT license.
 
