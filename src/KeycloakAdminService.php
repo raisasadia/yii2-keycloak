@@ -141,7 +141,9 @@ class KeycloakAdminService
         $token = $this->getAdminToken();
         if (!$token) return [];
 
-        $client = new Client();
+        $client = new Client([
+            'verify' => false,
+        ]);
         $response = $client->get("{$this->baseUrl}/admin/realms/{$this->realm}/users", [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
@@ -173,7 +175,9 @@ class KeycloakAdminService
         $token = $this->getAdminToken();
         if (!$token) return false;
 
-        $client = new Client();
+        $client = new Client([
+            'verify' => false,
+        ]);
         $url = "{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/logout";
 
         try {
