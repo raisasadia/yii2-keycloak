@@ -9,7 +9,9 @@ class AuthService
 
     public function getToken($code, $redirectUri)
     {
-        $client = new Client();
+        $client = new Client([
+            'verify' => false,
+        ]);
         try {
             $response = $client->post(\Yii::$app->params['keycloak']['token_url'], [
                 'form_params' => [
