@@ -49,7 +49,7 @@ class KeycloakAdminService
         }
     }
 
-    public function findUserByUsernameOrEmail($identifier)
+    public function findUserByEmail($identifier)
     {
         $token = $this->getAdminToken();
 
@@ -62,7 +62,7 @@ class KeycloakAdminService
                 'Authorization' => 'Bearer ' . $token,
                 'Content-Type' => 'application/json',
             ],
-            'query' => ['username' => $identifier],
+            'query' => ['email' => $identifier],
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
