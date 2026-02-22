@@ -68,6 +68,25 @@ class KeycloakAdminService
         return json_decode($response->getBody()->getContents(), true);
     }
 
+    public function findUserByUsername($identifier)
+    {
+        $token = $this->getAdminToken();
+
+        $client = new Client([
+            'verify' => false
+        ]);
+
+        $response = $client->get($this->baseUrl . '/admin/realms/' . $this->realm . '/users', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+            ],
+            'query' => ['username' => $identifier],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
     public function createUser($userData)
     {
         $token = $this->getAdminToken();
